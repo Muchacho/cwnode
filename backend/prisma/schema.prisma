@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model acting_area {
+  area_id    Int        @id @default(autoincrement())
+  num        Int?
+  capacity   Int?
+  theater_id Int        @default(autoincrement())
+  theaters   theaters   @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
+  schedule   schedule[]
+}
+
+model actors {
+  actors_id     Int            @id @default(autoincrement())
+  firstname     String         @db.VarChar(32)
+  lastname      String         @db.VarChar(32)
+  description   String         @db.VarChar(32)
+  birthday_date DateTime?      @db.Date
+  img_name      String?
+  theater_id    Int            @default(autoincrement())
+  theaters      theaters       @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
+  shows_actors  shows_actors[]
+}
+
+model bookedtickets {
+  ticket_id   Int      @id @default(autoincrement())
+  schedule_id Int      @default(autoincrement())
+  user_id     Int      @default(autoincrement())
+  schedule    schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: NoAction, onUpdate: NoAction)
+  users       users    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model commets {
+  comment_id Int     @id @default(autoincrement())
+  user_id    Int     @default(autoincrement())
+  shows_id   Int     @default(autoincrement())
+  rating     Int?
+  commet     String?
+  shows      shows   @relation(fields: [shows_id], references: [show_id], onDelete: NoAction, onUpdate: NoAction)
+  users      users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model schedule {
+  schedule_id   Int             @id @default(autoincrement())
+  theater_id    Int             @default(autoincrement())
+  area_id       Int             @default(autoincrement())
+  show_id       Int             @default(autoincrement())
+  start_time    DateTime?       @db.Time(6)
+  price         Float?          @db.Real
+  bookedtickets bookedtickets[]
+  acting_area   acting_area     @relation(fields: [area_id], references: [area_id], onDelete: NoAction, onUpdate: NoAction)
+  shows         shows           @relation(fields: [show_id], references: [show_id], onDelete: NoAction, onUpdate: NoAction)
+  theaters      theaters        @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model shows {
+  show_id        Int              @id @default(autoincrement())
+  name           String           @db.VarChar(32)
+  description    String?
+  duration       Int?
+  img_name       String?
+  rating         Decimal?         @db.Decimal(2, 1)
+  commets        commets[]
+  schedule       schedule[]
+  shows_actors   shows_actors[]
+  theaters_shows theaters_shows[]
+}
+
+model shows_actors {
+  actors_id Int    @default(autoincrement())
+  show_id   Int    @default(autoincrement())
+  actors    actors @relation(fields: [actors_id], references: [actors_id], onDelete: NoAction, onUpdate: NoAction)
+  shows     shows  @relation(fields: [show_id], references: [show_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([actors_id, show_id])
+}
+
+model theaters {
+  theater_id     Int              @id @default(autoincrement())
+  name           String           @db.VarChar(32)
+  description    String?
+  img_name       String?
+  acting_area    acting_area[]
+  actors         actors[]
+  schedule       schedule[]
+  theaters_shows theaters_shows[]
+}
+
+model theaters_shows {
+  theater_id Int      @default(autoincrement())
+  show_id    Int      @default(autoincrement())
+  shows      shows    @relation(fields: [show_id], references: [show_id], onDelete: NoAction, onUpdate: NoAction)
+  theaters   theaters @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([theater_id, show_id])
+}
+
+model users {
+  user_id       Int             @id @default(autoincrement())
+  email         String?         @unique @db.VarChar(128)
+  hash_password String?         @db.VarChar(128)
+  img_name      String?
+  role          String?         @db.VarChar(8)
+  bookedtickets bookedtickets[]
+  commets       commets[]
+}
