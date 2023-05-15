@@ -17,19 +17,20 @@ model acting_area {
 }
 
 model actors {
-  actors_id     Int            @id @default(autoincrement())
-  firstname     String         @db.VarChar(32)
-  lastname      String         @db.VarChar(32)
-  description   String         @db.VarChar(32)
-  birthday_date DateTime?      @db.Date
-  img_name      String?
-  theater_id    Int            @default(autoincrement())
-  theaters      theaters       @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
-  shows_actors  shows_actors[]
+  actors_id    Int            @id @default(autoincrement())
+  firstname    String         @db.VarChar(32)
+  lastname     String         @db.VarChar(32)
+  description  String         @db.VarChar(32)
+  birth_date   String?
+  img_name     String?
+  theater_id   Int            @default(autoincrement())
+  theaters     theaters       @relation(fields: [theater_id], references: [theater_id], onDelete: NoAction, onUpdate: NoAction)
+  shows_actors shows_actors[]
 }
 
 model bookedtickets {
   ticket_id   Int      @id @default(autoincrement())
+  place       Int?
   schedule_id Int      @default(autoincrement())
   user_id     Int      @default(autoincrement())
   schedule    schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: NoAction, onUpdate: NoAction)
@@ -41,7 +42,7 @@ model commets {
   user_id    Int     @default(autoincrement())
   shows_id   Int     @default(autoincrement())
   rating     Int?
-  commet     String?
+  comment    String?
   shows      shows   @relation(fields: [shows_id], references: [show_id], onDelete: NoAction, onUpdate: NoAction)
   users      users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -51,7 +52,7 @@ model schedule {
   theater_id    Int             @default(autoincrement())
   area_id       Int             @default(autoincrement())
   show_id       Int             @default(autoincrement())
-  start_time    DateTime?       @db.Time(6)
+  start_time    String?
   price         Float?          @db.Real
   bookedtickets bookedtickets[]
   acting_area   acting_area     @relation(fields: [area_id], references: [area_id], onDelete: NoAction, onUpdate: NoAction)
@@ -86,6 +87,7 @@ model theaters {
   name           String           @db.VarChar(32)
   description    String?
   img_name       String?
+  address        String?          @db.VarChar(32)
   acting_area    acting_area[]
   actors         actors[]
   schedule       schedule[]
@@ -107,6 +109,8 @@ model users {
   hash_password String?         @db.VarChar(128)
   img_name      String?
   role          String?         @db.VarChar(8)
+  firstname     String?         @db.VarChar(32)
+  lastname      String?         @db.VarChar(32)
   bookedtickets bookedtickets[]
   commets       commets[]
 }

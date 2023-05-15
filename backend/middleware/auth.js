@@ -12,18 +12,17 @@ const auth = async (request, response, next) => {
         next();
     }catch(error){
         console.log(error.message, 123);
-        response.status(500).json({message: 'Что-то пошло не так'});
+        response.status(500).json({message: 'Что-то пошло не так(auth)'});
     }
 }
 
 const checkRole = async (request, response, next) => {
     try{
-        console.log(request.user)
         if(request.user.role != 'admin')return response.status(403).json({message:"Forbidden"});
         next();
     }catch(error){
         console.log(error.message, 123);
-        response.status(500).json({message: 'Что-то пошло не так'});
+        response.status(500).json({message: 'Что-то пошло не так(authadmin)'});
     }
 }
 

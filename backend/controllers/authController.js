@@ -33,9 +33,9 @@ const login = async (request, response)=>{
 
 const register = async (request, response)=>{
     try{
-        let {email, password} = request.body;
+        let {email, password, firstname, lastname} = request.body;
 
-        if(!email || !password)return response.status(400).json({message: 'Пожалуйста, заполните обязательные поля'});
+        if(!email || !password || !firstname || !lastname)return response.status(400).json({message: 'Пожалуйста, заполните обязательные поля'});
 
         if(await prisma.users.findUnique({where:{email:email}})){
             return response.status(400).json({message: 'Пользователь уже существует'});
@@ -48,11 +48,18 @@ const register = async (request, response)=>{
             data:{
                 email,
                 hash_password: hashedPassword,
+                firstname,
+                lastname,
                 role: 'client'
             }
         })
         if(user){
-            return response.status(201).json(jwt.sign({id:user.user_id, role:user.role}, process.env.JWT_SECRET, {expiresIn: '10m'}));
+            return response.status(201).json({
+                id:user.user_id,
+                email:user.email,
+                role: user.role,
+                token: jwt.sign({id:user.user_id, role: user.role}, process.env.JWT_SECRET, {expiresIn: '10m'})
+            });                
         } else {
             return response.status(500).json({message:'Не удалось создать пользователя'});
         }
