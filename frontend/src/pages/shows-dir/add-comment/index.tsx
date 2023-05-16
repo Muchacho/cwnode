@@ -9,12 +9,19 @@ import { selectUser } from '../../../features/auth/authSlice'
 import { CommentData, Show, useAddCommentMutation, useAddShowMutation } from '../../../app/services/shows'
 import { ShowForm } from '../../../components/shows-form'
 import { CommentsForm } from '../../../components/comments-form'
+import jwt from 'jwt-decode'
+
 
 export const AddComment = () => {
 
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
+    const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
     const params = useParams();
     const [error, setError] = useState("");
-    const navigate = useNavigate();
     const user = useSelector(selectUser);
     const [addComment] = useAddCommentMutation();
 

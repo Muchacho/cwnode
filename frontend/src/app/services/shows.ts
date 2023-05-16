@@ -6,7 +6,8 @@ export type Show = {
     description: string,
     duration: string,
     rating?: string,
-    image_name?: string | undefined;
+    img?: any,
+    img_name?: string | undefined;
 }
 
 export type FullShowInfo = {
@@ -53,7 +54,7 @@ export const showApi = api.injectEndpoints({
                 method: "POST"
             })
         }),
-        addShow: builder.mutation<Show, Show>({
+        addShow: builder.mutation<Show, FormData>({
             query: (show) => ({
                 url:`/shows/add`,
                 method: "POST",

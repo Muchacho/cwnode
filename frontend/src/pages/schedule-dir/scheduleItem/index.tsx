@@ -12,6 +12,8 @@ import { isErrorWithMessage } from '../../../utils/is-error-with-message';
 import { FullShowInfo, useGetShowQuery, useRemoveShowMutation } from '../../../app/services/shows';
 import { ColumnsType } from 'antd/es/table';
 import { useBookTicketMutation, useGetBookedTicketsQuery, useGetScheduleItemQuery, useRemoveScheduleItemMutation } from '../../../app/services/schedule';
+import jwt from 'jwt-decode'
+
 
 // const columns: ColumnsType<['schedule'][0]> = [
 //     {
@@ -33,11 +35,16 @@ import { useBookTicketMutation, useGetBookedTicketsQuery, useGetScheduleItemQuer
 
 export const ScheduleItem = () => {
     const params = useParams();
+
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {data, isLoading} = useGetScheduleItemQuery(params.id || "");
-    const [bookTicket] = useBookTicketMutation();
     const [removeScheduleItem] = useRemoveScheduleItemMutation();
     const ticketsData = useGetBookedTicketsQuery(params.id || "");
     const user = useSelector(selectUser);
@@ -71,17 +78,12 @@ export const ScheduleItem = () => {
 
     const onSeatClick = async (key: number) => {
         try{
-            console.log(12, {
-                place: `${key}`,
-                user_id: `${user?.id}`,
-                schedule_id: `${params.id}`
-            });
-            await bookTicket({
-                place: `${key}`,
-                user_id: `${user?.id}`,
-                schedule_id: `${params.id}`
-            }).unwrap();
-            navigate(`${Paths.cart}`);
+            // console.log(12, {
+            //     place: `${key}`,
+            //     user_id: `${user?.id}`,
+            //     schedule_id: `${params.id}`
+            // });
+            navigate(`${Paths.purchase}/${key}-${params.id}`);
         }catch(error){
             const maybeError = isErrorWithMessage(error);
             if(maybeError) setError(error.data.message);

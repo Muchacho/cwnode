@@ -35,5 +35,8 @@ export const Paths = {
     addComment: '/api/shows/comment',
     changePassword: '/api/user/changePassword',
     deleteUser: '/api/user/delete',
-    ticket: '/api/user/ticket'
+    ticket: '/api/user/ticket',
+
+    purchase: '/api/schedule/purchase',
+    chat: '/api/chat'
 } as const;

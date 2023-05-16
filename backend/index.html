@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="events"></ul>
+  
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+        function sendMess(){
+            let data = document.getElementById('data').value;
+            console.log(data);
+            socket.emit('hello', data);
+        }
+
+      const $events = document.getElementById('events')
+  
+      const newItem = (content) => {
+        const item = document.createElement('li')
+        item.innerText = content
+        return item
+      }
+  
+      const socket = io('http://localhost:3010/')
+  
+      socket.on('connect', () => {
+        $events.appendChild(newItem('Подключение установлено'))
+      })
+  
+      // получаем данные от сервера
+      socket.on('hello', (counter) => {
+        $events.appendChild(newItem(`Привет - ${counter}`))
+      })
+  
+      // отправляем данные на сервер
+    </script>
+
+    <input id="data" type="text" onclick="sendMess()">
+    <!-- <input id="conn" type="text" "> -->
+  </body>
+</html>

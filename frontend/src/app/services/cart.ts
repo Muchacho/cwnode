@@ -4,9 +4,10 @@ export type Ticket = {
     name: string,
     schedule_id: string,
     show_id: string,
-    price: number,
+    price: string,
     place: string,
     time: string,
+    address: string,
     theater_name: string
 }
 

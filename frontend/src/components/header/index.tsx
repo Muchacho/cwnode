@@ -17,7 +17,7 @@ export const Header = () => {
     const onLogoutClick = () => {
         dispatch(logout());
         localStorage.removeItem('token');
-        navigate(Paths.home);
+        navigate(Paths.login);
     }
 
     // useEffect(()=> {
@@ -28,7 +28,9 @@ export const Header = () => {
     //     if(user)
     //         navigate(`${Paths.cart}`);
     // };
-
+    const openChat = () => {
+        navigate(Paths.chat);
+      }
   return (
     <Layout.Header className={styles.header}>
         <Space>
@@ -56,6 +58,7 @@ export const Header = () => {
         {
             user ? (
                 <Space>
+                    <CustomButton type="primary" onClick={openChat} > Чат </CustomButton>
                     <CustomButton type='ghost' icon={ <LoginOutlined/>} onClick={ onLogoutClick }>
                         Выйти
                     </CustomButton>

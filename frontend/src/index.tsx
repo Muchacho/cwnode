@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {ConfigProvider, theme} from 'antd';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
@@ -32,6 +32,14 @@ import { UserInfo } from './pages/user-dir/user';
 import { EditUser } from './pages/user-dir/edit-user';
 import { ChangePassword } from './pages/user-dir/change-password-user';
 import { AddArea } from './pages/theaters-dir/add-area';
+
+import * as ReactDOM from 'react-dom';
+// import {render} from ReactDOM;
+
+
+import jwt from 'jwt-decode'
+import { Chat } from './pages/chat';
+import { PurchaseForm } from './pages/schedule-dir/purchase-form';
 
 const router = createBrowserRouter([
   {
@@ -134,6 +142,14 @@ const router = createBrowserRouter([
     path: `${Paths.addArea}/:id`,
     element: <AddArea/>
   },
+  {
+    path: Paths.chat,
+    element: <Chat/>
+  },
+  {
+    path: `${Paths.purchase}/:id`,
+    element: <PurchaseForm/>
+  },
   // {
   //   path: `${Paths.deleteActor}/:id`,
   //   element: <ActorInfo/>
@@ -146,7 +162,17 @@ const router = createBrowserRouter([
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
+// useEffect('', ()=>{
+//     try{
+//       let token = localStorage.getItem('token');
+//       if(token) let decode = jwt(token);
+//     } catch(error){
+
+//     }
+// });
+
 root.render(
+  // ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <ConfigProvider theme={{
@@ -158,6 +184,7 @@ root.render(
       </ConfigProvider>
     </Provider>
   </React.StrictMode>
+  // document.querySelector("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

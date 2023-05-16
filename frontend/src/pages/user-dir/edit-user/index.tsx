@@ -10,9 +10,18 @@ import { Show, useEditShowMutation, useGetShowQuery } from '../../../app/service
 import { ShowForm } from '../../../components/shows-form';
 import { UserForm } from '../../../components/user-edit-form';
 import { User, useEditUserMutation, useGetUserDataQuery } from '../../../app/services/users';
+import jwt from 'jwt-decode'
+
 
 export const EditUser = () => {
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) {
+        decodeToken = {...jwt(token)}
+        console.log(decodeToken)
+        }
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
     // const params = useParams<{id: string}>();
     const [error, setError] = useState('');
     const {data, isLoading} = useGetUserDataQuery();
@@ -22,11 +31,15 @@ export const EditUser = () => {
 
     if(!data || data === null) return <Navigate to='/'/>
 
-    const handleEditUser = async (user: User) => {
+    const handleEditUser = async (data: User) => {
         try{
-            const editedUser = {...data, ...user};
+            let formData = new FormData();
+            formData.append('firstname', data.firstname);
+            formData.append('lastname', data.lastname);
+            formData.append('img', data.img);
+            // const editedUser = {...data, ...user};
 
-            await editUser(editedUser).unwrap();
+            await editUser(formData).unwrap();
             navigate(`${Paths.user}`);
         } catch(error){
             const maybeError = isErrorWithMessage(error);

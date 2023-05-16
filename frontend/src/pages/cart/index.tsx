@@ -12,6 +12,8 @@ import { selectUser } from '../../features/auth/authSlice'
 import { useGetCartQuery, useRemoveTicketMutation } from '../../app/services/cart'
 import { Ticket } from '../../app/services/cart'
 import { isErrorWithMessage } from '../../utils/is-error-with-message'
+import jwt from 'jwt-decode'
+
 
 const columns: ColumnsType<Ticket> = [
     {
@@ -42,7 +44,13 @@ const columns: ColumnsType<Ticket> = [
 ]
 
 export const Cart = () => {
+    
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState('');
     const { data, isLoading } = useGetCartQuery();

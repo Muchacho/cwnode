@@ -1,8 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
-const { request, response } = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = new PrismaClient()
+const fs = require('fs');
 
 
 const getUserInfo = async(request, response) => {
@@ -49,13 +49,16 @@ const updateUser = async (request, response) => {
     try{
         let {firstname, lastname} = request.body;
         let userId = request.user.user_id;
+        let file = request.file, filename = `${performance.now()}${file.originalname}`;
+        fs.writeFileSync(`./static/${filename}`, file.buffer);
         await prisma.users.update({
             where: {
                 user_id : userId
             },
             data: {
                 firstname: firstname,
-                lastname: lastname
+                lastname: lastname,
+                img_name: filename
             }
         });
         response.status(201).json({message: 'ok'});
@@ -80,6 +83,8 @@ const getTicket = async(request, response) => {
             price: schedule.price,
             time: schedule.start_time,
             theater_name: theater.name,
+            address: theater.address,
+            price: schedule.price,
             place: bookedTicket.place
         }
         response.status(201).json(result);

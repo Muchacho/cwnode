@@ -17,7 +17,7 @@ type Props<T> = {
 
 export const TheaterForm = ({ onFinish, title, btnText, error, theater }: Props<Theater>) => {
     const [file, setFile] = useState<any>()
-    const yyy = (e: any) => {
+    const setFileToData = (e: any) => {
         setFile(e.target.files[0])
     }
     const onFinishLocal = (e: any) => {
@@ -31,7 +31,7 @@ export const TheaterForm = ({ onFinish, title, btnText, error, theater }: Props<
                 <CustomInput type='text' name='name' placeholder='Название' />
                 <CustomInput type='text' name='description' placeholder='Описание' />
                 <CustomInput type='text' name='address' placeholder='Адрес' />
-                <CustomInput type='file' name='img' placeholder='Файл' onChange={yyy} />
+                <CustomInput type='file' name='img' placeholder='Файл' onChange={setFileToData} />
                 <Space>
                     <ErrorMessage message={error} />
                     <CustomButton htmlType='submit'>

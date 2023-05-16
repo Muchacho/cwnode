@@ -1,18 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
-const { request, response } = require('express');
 const jwt = require('jsonwebtoken');
 const prisma = new PrismaClient()
-
-// async function x(){
-//     try{
-    
-//        await prisma.commets.deleteMany();
-//     }catch(err){
-//         console.log(err);
-//     }
-// }
-
-// x()
+const fs = require('fs');
 
 const getAll = async (request, response) => {
     try{
@@ -64,15 +53,20 @@ const getShow = async (request, response) => {
 
 const addShow = async (request, response) => {
     try{
+        console.log(request.body);
+        console.log(request.file);
         let {name, description, duration} = request.body;
         if(!name || !description || !duration)return response.status(400).json({message: 'Пожалуйста, заполните обязательные поля'});
         if(await prisma.shows.findFirst({where:{name:name}})) return response.status(400).json({message: 'Представление с таким именем уже существует'});
+        let file = request.file, filename = `${performance.now()}${file.originalname}`;
+        fs.writeFileSync(`./static/${filename}`, file.buffer);
         let result = await prisma.shows.create({
             data: {
                 name: name,
                 description: description,
                 duration: +duration,
-                rating: null
+                rating: null,
+                img_name: filename
             }
         });
         response.status(201).json({message:'ok'});

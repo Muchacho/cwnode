@@ -6,9 +6,18 @@ import { Row } from 'antd';
 import { TheaterForm } from '../../../components/theaters-from';
 import { Paths } from '../../../paths';
 import { isErrorWithMessage } from '../../../utils/is-error-with-message';
+import jwt from 'jwt-decode'
+
+
 
 export const EditTheater = () => {
+
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
     const params = useParams<{id: string}>();
     const [error, setError] = useState('');
     const {data, isLoading} = useGetTheaterQuery(params.id || '');

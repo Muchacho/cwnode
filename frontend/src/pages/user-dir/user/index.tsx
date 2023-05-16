@@ -12,9 +12,18 @@ import { isErrorWithMessage } from '../../../utils/is-error-with-message';
 import { CommentData, FullShowInfo, useGetCommentsQuery, useGetShowQuery, useRemoveShowMutation } from '../../../app/services/shows';
 import { ColumnsType } from 'antd/es/table';
 import { useGetUserDataQuery, useRemoveUserMutation } from '../../../app/services/users';
+import jwt from 'jwt-decode'
 
 export const UserInfo = () => {
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) {
+        decodeToken = {...jwt(token)}
+        console.log(decodeToken)
+
+    }
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {data, isLoading} = useGetUserDataQuery();
@@ -50,6 +59,7 @@ export const UserInfo = () => {
     }
 
     const changeAvatar = ()=>{
+        console.log(data);
         alert('qwe');
     }
   return (
@@ -60,7 +70,7 @@ export const UserInfo = () => {
         <br/>
         {
             data.img_name ? (
-                <img className={'avatar'} src={`https://localhost:9000/static/85.jpg`} onClick={changeAvatar}/>
+                <img className={'avatar'} src={`https://localhost:9000/static/${data.img_name}`} onClick={changeAvatar}/>
             ) : (
                 <Avatar size={64} icon={<UserOutlined />} />
             )

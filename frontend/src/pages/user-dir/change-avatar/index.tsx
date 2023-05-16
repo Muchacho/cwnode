@@ -14,9 +14,16 @@ import { CustomInput } from '../../../components/custom-input';
 import { PasswordInput } from '../../../components/password-input';
 import { CustomButton } from '../../../components/custom-button';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import jwt from 'jwt-decode'
+
 
 export const ChangeAvatar = () => {
+    
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
     // const params = useParams<{id: string}>();
     const [error, setError] = useState('');
     const {data, isLoading} = useGetUserDataQuery();

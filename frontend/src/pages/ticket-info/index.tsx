@@ -11,11 +11,17 @@ import { ErrorMessage } from '../../components/error-message';
 import { isErrorWithMessage } from '../../utils/is-error-with-message';
 import { FullShowInfo, useGetShowQuery, useRemoveShowMutation } from '../../app/services/shows';
 import { ColumnsType } from 'antd/es/table';
+import jwt from 'jwt-decode'
 import { useGetTicketQuery, useRemoveTicketMutation } from '../../app/services/cart';
+
 
 export const Ticket = () => {
     const params = useParams();
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {data, isLoading} = useGetTicketQuery(params.id || "");
@@ -57,13 +63,22 @@ export const Ticket = () => {
         <br/>
         <Descriptions>
             <Descriptions.Item label='Представление' span={3}>
-                {data.ticket_id}
+                {data.name}
             </Descriptions.Item>
-            <Descriptions.Item label='Время' span={3}>
-                {data.show_id}  
+            <Descriptions.Item label='Дата и время' span={3}>
+                {data.time}  
+            </Descriptions.Item>
+            <Descriptions.Item label='Театр' span={3}>
+                {data.theater_name}  
             </Descriptions.Item>
             <Descriptions.Item label='Место' span={3}>
                 {data.place}  
+            </Descriptions.Item>
+            <Descriptions.Item label='Адрес' span={3}>
+                {data.address}  
+            </Descriptions.Item>
+            <Descriptions.Item label='Цена' span={3}>
+                {data.price} рублей
             </Descriptions.Item>
             {/* <Descriptions.Item label='Продолжительность' span={3}>
                 {data.show.duration} минут

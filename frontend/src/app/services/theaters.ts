@@ -46,7 +46,7 @@ export const theaterApi = api.injectEndpoints({
                 method: "POST"
             })
         }),
-        addTheater: builder.mutation<Theater, Theater>({
+        addTheater: builder.mutation<Theater, FormData>({
             query: (theater) => ({
                 url:`/theaters/add`,
                 method: "POST",

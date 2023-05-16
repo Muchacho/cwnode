@@ -13,6 +13,9 @@ import { ScheduleForm } from '../../../components/schedule-form'
 import { ScheduleData, useAddScheduleItemMutation } from '../../../app/services/schedule'
 import { Theater, useGetAllTheatersQuery, useGetTheatersWithAreasQuery } from '../../../app/services/theaters'
 import { ColumnsType } from 'antd/es/table'
+import jwt from 'jwt-decode'
+
+
 
 const columns: ColumnsType<{name:string, areas: string}> = [
     {
@@ -30,9 +33,14 @@ const columns: ColumnsType<{name:string, areas: string}> = [
 
 export const AddScheduleItem = () => {
 
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
+    const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
     const params = useParams();
     const [error, setError] = useState("");
-    const navigate = useNavigate();
     const user = useSelector(selectUser);
     const [addScheduleItem] = useAddScheduleItemMutation();
     const { data, isLoading } = useGetTheatersWithAreasQuery();

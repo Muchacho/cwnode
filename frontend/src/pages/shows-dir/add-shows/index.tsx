@@ -8,11 +8,18 @@ import { isErrorWithMessage } from '../../../utils/is-error-with-message'
 import { selectUser } from '../../../features/auth/authSlice'
 import { Show, useAddShowMutation } from '../../../app/services/shows'
 import { ShowForm } from '../../../components/shows-form'
+import jwt from 'jwt-decode'
+
 
 export const AddShows = () => {
 
-    const [error, setError] = useState("");
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token) decodeToken = {...jwt(token)}
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
+    const [error, setError] = useState("");
     const user = useSelector(selectUser);
     const [addShow] = useAddShowMutation();
 
@@ -22,7 +29,13 @@ export const AddShows = () => {
 
     const handleAddShow = async (data: Show) => {
         try{
-            await addShow(data).unwrap();
+            console.log(data);
+            let formData = new FormData();
+            formData.append('name', data.name);
+            formData.append('description', data.description);
+            formData.append('duration', data.duration);
+            formData.append('img', data.img);
+            await addShow(formData).unwrap();
             navigate(`${Paths.status}/created`);
         } catch(error){
             const maybeError = isErrorWithMessage(error);

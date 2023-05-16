@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { Paths } from '../../../paths'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../features/auth/authSlice'
+import jwt from 'jwt-decode'
 
 const columns: ColumnsType<Theater> = [
     {
@@ -25,14 +26,31 @@ const columns: ColumnsType<Theater> = [
 
 export const Theaters = () => {
 
+    let token = localStorage.getItem('token');
     const { data, isLoading } = useGetAllTheatersQuery();
     const navigate = useNavigate();
-    const user = useSelector(selectUser);
+    // const user = useSelector(selectUser);
+    let tokenDecode = {id: -1, role: 'non auth'}
     useEffect(()=> {
-        if(!user)navigate(Paths.login);
-    }, [navigate, user])
+        // if(!user)navigate(Paths.login);
+        if(token) tokenDecode = {...jwt(token)};
+        // if(tokenDecode.role == 'non auth') navigate(Paths.login);
+
+    }, [navigate, token])
 
     const goToAddTheaters = () => navigate(Paths.addTheater)
+
+    const addButton = () => {
+        if(token) tokenDecode = {...jwt(token)};
+        console.log(tokenDecode);
+        if(tokenDecode && tokenDecode?.role == 'admin') {
+            return (
+                <CustomButton type='primary' onClick={ goToAddTheaters } icon = {<PlusCircleOutlined/>}>
+                    Добавить
+                </CustomButton>)
+        }
+        return (<></>)
+    }
 
   return (
     <Layout>
@@ -40,11 +58,7 @@ export const Theaters = () => {
                 Театры
             </Typography.Title>
             {
-                user?.role === 'admin' ? (
-                <CustomButton type='primary' onClick={ goToAddTheaters } icon = {<PlusCircleOutlined/>}>
-                    Добавить
-                </CustomButton>
-                ) : (<></>)
+                addButton()
             }
         <Table
             loading = { isLoading }

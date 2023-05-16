@@ -1,5 +1,38 @@
-const fs = require('fs');
-let arr = fs.readFileSync('D:\\projects\\BSTU\\6\\Kurs\\app\\backend\\static\\85.jpg');
-// fs.copyFileSync('D:\\projects\\BSTU\\6\\Kurs\\app\\backend\\static\\D:\\projects\\BSTU\\6\\Kurs\\app\\backend\\static\\85.jpg', 'D:\\projects\\BSTU\\6\\Kurs\\app\\backend\\static\\q');
-fs.writeFileSync('D:\\projects\\BSTU\\6\\Kurs\\app\\backend\\static\\q\\86.jpg', arr);
-console.log(arr);
+// index.js
+const content = require('fs').readFileSync(__dirname + '/index.html', 'utf8')
+
+const httpServer = require('http').createServer((req, res) => {
+  res.setHeader('Content-Type', 'text/html')
+  res.setHeader('Content-Length', Buffer.byteLength(content))
+  res.end(content)
+})
+
+let kq = 0;
+
+let room;
+
+
+const io = require('socket.io')(httpServer)
+
+io.on('connection', socket => {
+        socket.join('1');
+    console.log(socket.id, kq);
+  let counter = 0
+    // отправляем данные клиенту
+    socket.on('hello', data=>{
+        console.log(data);
+        io.emit('hello', data);
+    })
+  // получаем данные от клиента
+  socket.on('hi', data => {
+    console.log('hi', data)
+  })
+})
+
+httpServer.listen(3010, () => {
+  console.log('Перейдите на http://localhost:3000')
+})
+
+
+
+console.log(+'04' < new Date().getMonth());

@@ -8,11 +8,20 @@ import { Theater, useAddTheaterMutation } from '../../../app/services/theaters'
 import { Paths } from '../../../paths'
 import { isErrorWithMessage } from '../../../utils/is-error-with-message'
 import { selectUser } from '../../../features/auth/authSlice'
+import jwt from 'jwt-decode'
+
 
 export const AddTheaters = () => {
 
-    const [error, setError] = useState("");
+    let token = localStorage.getItem('token');
+    let decodeToken = {role: 'non auth', id: -1};
+    if(token){ decodeToken = {...jwt(token)}
+        console.log(decodeToken, "--------------");
+    }
     const navigate = useNavigate();
+    if(decodeToken.role == 'non auth') navigate(Paths.login);
+
+    const [error, setError] = useState("");
     const user = useSelector(selectUser);
     const [addTheater] = useAddTheaterMutation();
 
@@ -30,15 +39,12 @@ export const AddTheaters = () => {
 
     const handleAddTheater = async (data: Theater) => {
         try{
-            
-            console.log(data);
             let formData = new FormData();
             formData.append('name', data.name);
             formData.append('description', data.description);
             formData.append('address', data.address);
             formData.append('img', data.img);
-            // await addTheater(data).unwrap();
-            const request = await fetch('https://localhost:9000/api/theaters/add', requestOptions(formData));
+            await addTheater(formData).unwrap();
             navigate(`${Paths.status}/showCreated`);
         } catch(error){
             const maybeError = isErrorWithMessage(error);

@@ -165,13 +165,14 @@ const updateSchedule = async (request, response) => {
 const bookTicket = async (request, response)=> {
     try{
         console.log(request.body);
-        let {schedule_id, place, user_id} = request.body;
-        if(!schedule_id || !place || !user_id)return response.status(400).json({message: 'Пожалуйста, заполните обязательные пол1я'});
+        let {schedule_id, place} = request.body;
+        console.log(request.user);
+        if(!schedule_id || !place || !request.user.user_id)return response.status(400).json({message: 'Пожалуйста, заполните обязательные пол1я'});
         await prisma.bookedtickets.create({
             data:{
                schedule_id: +schedule_id,
                place: +place,
-               user_id: +user_id
+               user_id: +request.user.user_id
             }
         });
         response.status(201).json({message:'ok'});

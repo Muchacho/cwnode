@@ -10,12 +10,18 @@ import { Paths } from '../../paths';
 import { UserData, useLoginMutation } from '../../app/services/auth';
 import { isErrorWithMessage } from '../../utils/is-error-with-message';
 import { ErrorMessage } from '../../components/error-message';
+import { logout } from '../../features/auth/authSlice';
+import { useDispatch } from 'react-redux';
 
 export const Login = () =>{
+
+    let token = localStorage.getItem('token');
 
     const navigate = useNavigate();
 
     const [loginUser, loginUserResult] = useLoginMutation();
+
+    const dispatch = useDispatch();
 
     const [error, setError] = useState('');
 

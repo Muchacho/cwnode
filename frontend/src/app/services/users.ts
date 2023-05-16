@@ -4,7 +4,8 @@ export type User = {
     email: string,
     firstname: string,
     lastname: string,
-    img_name?: string
+    img_name?: string,
+    img?: any
 }
 
 export const usersApi = api.injectEndpoints({
@@ -28,7 +29,7 @@ export const usersApi = api.injectEndpoints({
                 body: data
             })
         }),
-        editUser: builder.mutation<string, User>({
+        editUser: builder.mutation<string, FormData>({
             query: (user) => ({
                 url:`/user/update`,
                 method: "POST",

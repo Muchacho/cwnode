@@ -78,7 +78,7 @@ export const scheduleApi = api.injectEndpoints({
                 method: "GET",
             })
         }),
-        bookTicket: builder.mutation<string, {schedule_id:string, place:string, user_id: string}>({
+        bookTicket: builder.mutation<string, {schedule_id:string, place:string}>({
             query: (ticket) => ({
                 url:`/schedule/bookTicket`,
                 method: "POST",
